@@ -12,7 +12,7 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cppsthesis}[2021/11/03 v1.0.0 Document class for graduate thesis of Tsukuba's CPPS]
+\ProvidesClass{cppsthesis}[2021/11/12 v2.0.0 Document class for graduate thesis of Tsukuba's CPPS]
 \RequirePackage{kvoptions}
 
 % オプションの定義と処理
@@ -32,7 +32,7 @@
 
 % jlreq.clsの読み込み（landscapeとtateは上書きで対処できないのでエラー処理）
 \LoadClass[\cppsthesis@jlreqoptions,paper=a4,fontsize=\cppsthesis@fontsize,jafontsize=\cppsthesis@fontsize,%
-  head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,report,oneside,onecolumn,openany,number_of_lines={},line_length={}]{jlreq}
+  head_space=20mm,foot_space=20mm,fore-edge=25mm,gutter=25mm,report,oneside,onecolumn,openany,number_of_lines={},line_length={}]{jlreq}
 \if@landscape\errmessage{DON'T use "landscape" option!!}\fi
 \if@tate\errmessage{DON'T use "tate" option!!}\fi
 
@@ -72,7 +72,7 @@
     \itemindent\listparindent
     \labelwidth\z@
     \labelsep\z@
-    \leftmargin=2\zw
+    \leftmargin=1\zw
     \rightmargin\leftmargin
     \@tempdima=1\zw
     \@tempdimb=\dimexpr\linewidth-\@totalleftmargin-\leftmargin-\rightmargin\relax
@@ -141,8 +141,8 @@
       \list{}{%
         \labelwidth=\ifcppsthesis@nolabel\z@\else5\zw\fi
         \labelsep\z@
-        \leftmargin=\dimexpr20pt+\labelwidth\relax
-        \rightmargin=\dimexpr20pt-\marginparwidth-\marginparsep\relax
+        \leftmargin\labelwidth
+        \rightmargin=\dimexpr-\marginparwidth-\marginparsep\relax
         \itemsep=20pt
       }%
       % デフォルト時の題目と副題
