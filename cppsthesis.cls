@@ -12,7 +12,7 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cppsthesis}[2021/11/12 v2.0.0 Document class for graduate thesis of Tsukuba's CPPS]
+\ProvidesClass{cppsthesis}[2021/11/20 v2.1.0 Document class for graduate thesis of Tsukuba's CPPS]
 \RequirePackage{kvoptions}
 
 % オプションの定義と処理
@@ -27,14 +27,20 @@
 \DeclareVoidOption{10.5pt}{\def\cppsthesis@fontsize{10.5pt}}
 \DeclareStringOption[1]{abstract}
 \DeclareStringOption{jlreqoptions}
+\DeclareVoidOption{tate}{}
+\DeclareVoidOption{landscape}{}
+\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{jlreq}}
 \ProcessKeyvalOptions*
 \ifcppsthesis@centerall\cppsthesis@centertitletrue\cppsthesis@nolabeltrue\fi
+\ifx\cppsthesis@jlreqoptions\@empty\else
+  \ClassWarningNoLine{\@currname}{%
+  `jlreqoptions' option was decommissioned.\MessageBreak
+  If you want to use options of jlreq, input them directly}
+\fi
 
-% jlreq.clsの読み込み（landscapeとtateは上書きで対処できないのでエラー処理）
-\LoadClass[\cppsthesis@jlreqoptions,paper=a4,fontsize=\cppsthesis@fontsize,jafontsize=\cppsthesis@fontsize,%
+% jlreq.clsの読み込み
+\LoadClass[paper=a4,fontsize=\cppsthesis@fontsize,jafontsize=\cppsthesis@fontsize,%
   head_space=20mm,foot_space=20mm,fore-edge=25mm,gutter=25mm,report,oneside,onecolumn,openany,number_of_lines={},line_length={}]{jlreq}
-\if@landscape\errmessage{DON'T use "landscape" option!!}\fi
-\if@tate\errmessage{DON'T use "tate" option!!}\fi
 
 % 不使用コマンドクリア
 \let\@date\@empty
@@ -77,7 +83,7 @@
     \@tempdima=1\zw
     \@tempdimb=\dimexpr\linewidth-\@totalleftmargin-\leftmargin-\rightmargin\relax
     \@tempdimc=\@tempdimb
-    \divide\@tempdimb by \@tempdima\multiply\@tempdimb by \@tempdima
+    \divide\@tempdimb\@tempdima \multiply\@tempdimb\@tempdima
     \ifdim\@tempdimb=\@tempdimc\else\@tempdimb=\dimexpr\@tempdimb-1\zw\relax\fi
     \leftmargin=\dimexpr\leftmargin+(\@tempdimc-\@tempdimb)/2\relax
     \rightmargin=\dimexpr\rightmargin+(\@tempdimc-\@tempdimb)/2-\marginparwidth-\marginparsep\relax
@@ -109,7 +115,6 @@
 \fi
 
 % \maketitleの再定義
-\let\cppsthesis@break\\
 \renewcommand{\maketitle}{%
   \hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
   % 中表紙
@@ -165,14 +170,15 @@
   \loop\ifnum\@tempcnta<\cppsthesis@abstract
     % 要旨ページ
     \newpage\thispagestyle{empty}\vspace*{20pt}%
-    \let\\\relax
-    \ifcppsthesis@separatetitles
-      \leftline{\Large\@title}
-      \ifcppsthesis@subtitlegiven\leftline{\Large\quad\@subtitle}\fi
-    \else
-      \leftline{\Large\@title\ifcppsthesis@subtitlegiven\quad\@subtitle\fi}%
-    \fi
-    \let\\\cppsthesis@break
+    {%
+      \let\\\relax
+      \ifcppsthesis@separatetitles
+        \leftline{\Large\@title}
+        \ifcppsthesis@subtitlegiven\leftline{\Large\quad\@subtitle}\fi
+      \else
+        \leftline{\Large\@title\ifcppsthesis@subtitlegiven\quad\@subtitle\fi}%
+      \fi
+    }%
     \vspace{20pt}%
     \centerline{\Large\@major\qquad\@studentID\qquad\@author}%
     \vspace{20pt}%
@@ -214,7 +220,6 @@
   \global\let\studentID\relax
   \global\let\author\relax
   \global\let\advisor\relax
-  \global\let\cppsthesis@break\relax
   \global\let\maketitle\relax
 }
 \endinput
