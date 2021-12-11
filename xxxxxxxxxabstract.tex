@@ -1,0 +1,134 @@
+%%
+%% This is file 'xxxxxxxxxabstract.tex'.
+%%
+%% Copyright (c) 2021 Shigetaka Taga
+%%
+%% This software is released under the MIT License.
+%%   https://github.com/tagacchy/cppsthesis/blob/main/LICENSE
+%%
+%% For further information, see the document 'cppssynopsis.pdf'.
+%%   https://github.com/tagacchy/cppsthesis/blob/main/cppssynopsis.pdf
+%%
+%% NOTICE: This file contains Japanese characters.
+%%
+
+% クラスファイル（原稿本体部分はこの環境の後にあります）
+\begin{filecontents}{cppssynopsis.cls}
+%%
+%% This is file 'cppssynopsis.cls'.
+%%
+%% Copyright (c) 2021 Shigetaka Taga
+%%
+%% This software is released under the MIT License.
+%%   https://github.com/tagacchy/cppsthesis/blob/main/LICENSE
+%%
+%% For further information, see the document 'cppssynopsis.pdf'.
+%%   https://github.com/tagacchy/cppsthesis/blob/main/cppssynopsis.pdf
+%%
+%% NOTICE: This file contains Japanese characters.
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{cppssynopsis}[2021/12/11 v1.0.0 Document class for synopsis of graduate thesis of Tsukuba's CPPS]
+\RequirePackage{kvoptions}
+
+% 余白（変更可能）・フォントサイズ（目安）
+\PassOptionsToClass{head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,fontsize=9pt}{jlreq}
+
+% オプションの定義と処理
+\DeclareVoidOption{tate}{}
+\DeclareVoidOption{landscape}{}
+\DeclareStringOption{fontsize}
+\DeclareStringOption{jafontsize}
+\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{jlreq}}
+\ProcessKeyvalOptions*
+
+\PassOptionsToClass{jafontsize=\cppssynopsis@jafontsize}{jlreq}
+% jafontsize指定かつfontsize不指定ならばfontsizeはjlreqに計算させる
+\ifx\cppssynopsis@jafontsize\@empty\else
+  \ifx\cppssynopsis@fontsize\@empty
+  \PassOptionsToClass{fontsize={}}{jlreq}
+  \fi
+\fi
+% jlreq.clsの読み込み（用紙サイズA4：必須、2段組：必須？）
+\LoadClass[paper=a4,article,oneside,twocolumn]{jlreq}
+
+% ページ番号は入れない（必須なのでコマンドをクリアして変更禁止）
+\pagestyle{empty}
+\let\pagestyle\@gobble
+\let\thispagestyle\@gobble
+
+% 不使用コマンドクリア
+\let\date\relax
+\let\@date\@empty
+\let\thanks\relax
+\let\and\relax
+\let\abstractname\@empty
+\renewenvironment{abstract}{}{}
+
+% 追加の項目入力コマンド定義（\titleはstar付きで再定義）
+\DeclareRobustCommand*\title[1]{\gdef\@title{#1}}
+\newif\ifcppsthesis@subtitlegiven\cppsthesis@subtitlegivenfalse
+\DeclareRobustCommand*\subtitle[1]{\cppsthesis@subtitlegiventrue\gdef\@subtitle{#1}}
+\DeclareRobustCommand*\major[1]{\gdef\@major{#1}}
+\DeclareRobustCommand*\studentID[1]{\gdef\@studentID{#1}}
+\DeclareRobustCommand*\advisor[1]{\gdef\@advisor{#1}}
+\let\@author\@undefined % \author無しはエラー
+
+% \maketitleで題目から指導教員まで出力（フォント設定は必須なので変更禁止）
+\renewcommand\maketitle{%
+  \begingroup
+    \twocolumn[%
+      \fontsize{9pt}{18pt}\selectfont\sffamily\gtfamily
+      \begin{center}%
+        \vspace*{9pt}%
+        \centerline{\fontsize{18pt}{36pt}\selectfont\@title}%
+        \vspace{6pt}%
+        \ifcppsthesis@subtitlegiven\centerline{\@subtitle}\fi%
+        \centerline{\@major\hspace{\zw}\@studentID\hspace{\zw}\@author}%
+        \centerline{指導教員：\@advisor}%
+        \vspace{9pt}%
+      \end{center}%
+    ]%
+  \endgroup
+  % 使用済みコマンドをクリア
+  \global\let\@title\@empty
+  \global\let\@subtitle\@empty
+  \global\let\@major\@empty
+  \global\let\@studentID\@empty
+  \global\let\@author\@empty
+  \global\let\@advisor\@empty
+  \global\let\title\relax
+  \global\let\subtitle\relax
+  \global\let\major\relax
+  \global\let\studentID\relax
+  \global\let\author\relax
+  \global\let\advisor\relax
+  \global\let\maketitle\relax
+}
+
+% 節見出しのフォントサイズ設定（目安、\ModifyHeadingで変更可能）
+\ModifyHeading{section}{font={\jlreq@keepbaselineskip{\normalsize\sffamily\gtfamily\bfseries}}}
+\ModifyHeading{subsection}{font={\jlreq@keepbaselineskip{\normalsize\sffamily\gtfamily\bfseries}},indent=\zw,subtitle_font={\jlreq@keepbaselineskip{\normalsize}}}
+\ModifyHeading{subsubsection}{subtitle_font={\jlreq@keepbaselineskip{\normalsize}},indent=2\zw,before_lines=0}
+
+\endinput
+\end{filecontents}
+
+% ここからが文書ファイル本体です。
+
+\documentclass[]{cppssynopsis}
+
+\title{<卒業研究題目>}
+% \subtitle{<副題>}
+\major{<主専攻>}
+\studentID{<学籍番号>}
+\author{<著者氏名>}
+\advisor{<指導教員氏名・職名>}
+
+\begin{document}
+\maketitle
+
+ここに本文を書きます。
+
+\end{document}

@@ -7,12 +7,13 @@
 %%   https://github.com/tagacchy/cppsthesis/blob/main/LICENSE
 %%
 %% For further information, see the document 'cppsthesis.pdf'.
+%%   https://github.com/tagacchy/cppsthesis/blob/main/cppsthesis.pdf
 %%
 %% NOTICE: This file contains Japanese characters.
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cppsthesis}[2021/11/20 v2.1.0 Document class for graduate thesis of Tsukuba's CPPS]
+\ProvidesClass{cppsthesis}[2021/12/11 v2.1.1 Document class for graduate thesis of Tsukuba's CPPS]
 \RequirePackage{kvoptions}
 
 % オプションの定義と処理
@@ -46,11 +47,10 @@
 \let\@date\@empty
 \let\date\relax
 \let\and\relax
-\let\@thanks\@empty
 \let\thanks\relax
 \let\abstractname\@empty
 
-% 追加の項目入力コマンド定義（titleはnot longに再定義）
+% 追加の項目入力コマンド定義（\titleは*付きで再定義）
 \DeclareRobustCommand*\academicyear[1]{\gdef\@academicyear{#1}}
 \DeclareRobustCommand*\title[1]{\gdef\@title{#1}}
 \newif\ifcppsthesis@subtitlegiven\cppsthesis@subtitlegivenfalse
@@ -58,6 +58,7 @@
 \DeclareRobustCommand*\major[1]{\gdef\@major{#1}}
 \DeclareRobustCommand*\studentID[1]{\gdef\@studentID{#1}}
 \DeclareRobustCommand*\advisor[1]{\gdef\@advisor{#1}}
+\let\@author\@undefined% \author無しのときエラー 
 
 % abstract環境を再定義（微修正）
 \renewenvironment{abstract}{%
@@ -114,8 +115,8 @@
   \def\@advisorlabel{指導教員：\hbox{}}
 \fi
 
-% \maketitleの再定義
-\renewcommand{\maketitle}{%
+% \maketitleで題目から目次まで出力
+\renewcommand\maketitle{%
   \hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
   % 中表紙
   \begin{titlepage}\LARGE
