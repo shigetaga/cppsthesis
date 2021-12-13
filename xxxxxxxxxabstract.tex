@@ -1,120 +1,61 @@
-% クラスファイル（原稿本体部分はこの環境の後にあります）
-\begin{filecontents}{cppssynopsis.cls}
-%%
-%% This is file 'cppssynopsis.cls'.
-%%
-%% Copyright (c) 2021 Shigetaka Taga
-%%
-%% This software is released under the MIT License.
-%%   https://github.com/tagacchy/cppsthesis/blob/main/LICENSE
-%%
-%% For further information, see the document 'cppssynopsis.pdf'.
-%%   https://github.com/tagacchy/cppsthesis/blob/main/cppssynopsis.pdf
-%%
-%% NOTICE: This file contains Japanese characters.
-%%
-
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cppssynopsis}[2021/12/11 v1.0.0 Document class for synopsis of graduate thesis of Tsukuba's CPPS]
-\RequirePackage{kvoptions}
-
-% 余白（変更可能）・フォントサイズ（目安）
+%
+% ここのオプション（第1引数）は変更可能・追加自由（ただし tate と landscape は禁止）
 \PassOptionsToClass{head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,fontsize=9pt}{jlreq}
 
-% オプションの定義と処理
-\DeclareVoidOption{tate}{}
-\DeclareVoidOption{landscape}{}
-\DeclareStringOption{fontsize}
-\DeclareStringOption{jafontsize}
-\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{jlreq}}
-\ProcessKeyvalOptions*
+% 強制オプションとクラスファイル読み込み（書き換え禁止）
+\documentclass[paper=a4,article,oneside,twocolumn,notitlepage]{jlreq}
 
-\PassOptionsToClass{jafontsize=\cppssynopsis@jafontsize}{jlreq}
-% jafontsize指定かつfontsize不指定ならばfontsizeはjlreqに計算させる
-\ifx\cppssynopsis@jafontsize\@empty\else
-  \ifx\cppssynopsis@fontsize\@empty
-  \PassOptionsToClass{fontsize={}}{jlreq}
-  \fi
-\fi
-% jlreq.clsの読み込み（用紙サイズA4：必須、2段組：必須？）
-\LoadClass[paper=a4,article,oneside,twocolumn]{jlreq}
-
-% ページ番号は入れない（必須なのでコマンドをクリアして変更禁止）
-\pagestyle{empty}
-\let\pagestyle\@gobble
-\let\thispagestyle\@gobble
-
-% 不使用コマンドクリア
-\let\date\relax
-\let\@date\@empty
-\let\thanks\relax
-\let\and\relax
-\let\abstractname\@empty
-\renewenvironment{abstract}{}{}
-
-% 追加の項目入力コマンド定義（\titleはstar付きで再定義）
-\DeclareRobustCommand*\title[1]{\gdef\@title{#1}}
-\newif\ifcppsthesis@subtitlegiven\cppsthesis@subtitlegivenfalse
-\DeclareRobustCommand*\subtitle[1]{\cppsthesis@subtitlegiventrue\gdef\@subtitle{#1}}
-\DeclareRobustCommand*\major[1]{\gdef\@major{#1}}
-\DeclareRobustCommand*\studentID[1]{\gdef\@studentID{#1}}
-\DeclareRobustCommand*\advisor[1]{\gdef\@advisor{#1}}
-\let\@author\@undefined % \author無しはエラー
-
-% \maketitleで題目から指導教員まで出力（フォント設定は必須なので変更禁止）
-\renewcommand\maketitle{%
-  \begingroup
-    \twocolumn[%
-      \fontsize{9pt}{18pt}\selectfont\sffamily\gtfamily
+%% -----設定ここから----- %%
+%% \ModifyHeading 以外は原則として触らないこと
+  \makeatletter
+  % tate や landscape が使われてたら即座に停止
+  \if@landscape\errmessage{DON'T use "landscape" option!!}\fi
+  \if@tate\errmessage{DON'T use "tate" option!!}\fi
+  % 1ページ目の一番上に出力するもの
+  \DeclareRobustCommand*\titleitems[6]{
+    \gdef\@maketitle{%
+      \fontsize{9pt}{12pt}\selectfont\sffamily\gtfamily
       \begin{center}%
-        \vspace*{9pt}%
-        \centerline{\fontsize{18pt}{36pt}\selectfont\@title}%
-        \vspace{6pt}%
-        \ifcppsthesis@subtitlegiven\centerline{\@subtitle}\fi%
-        \centerline{\@major\hspace{\zw}\@studentID\hspace{\zw}\@author}%
-        \centerline{指導教員：\@advisor}%
+        \ltjsetparameter{kanjiskip={0.05\zw plus 0.1\zw minus 0.05\zw}}%
         \vspace{9pt}%
+        \vtop{\fontsize{18pt}{24pt}\selectfont{#1}}%
+        \vspace{12pt}%
+        \ifx#2\@empty\else\vtop{{#2}}\vspace{6pt}\fi%
+        \vtop{{#3}\hspace{\zw}{#4}\hspace{\zw}{#5}}\vspace{6pt}%
+        \vtop{指導教員：{#6}}%
+        \vspace{15pt}\vtop{}%
       \end{center}%
-    ]%
-  \endgroup
-  % 使用済みコマンドをクリア
-  \global\let\@title\@empty
-  \global\let\@subtitle\@empty
-  \global\let\@major\@empty
-  \global\let\@studentID\@empty
-  \global\let\@author\@empty
-  \global\let\@advisor\@empty
-  \global\let\title\relax
-  \global\let\subtitle\relax
-  \global\let\major\relax
-  \global\let\studentID\relax
-  \global\let\author\relax
-  \global\let\advisor\relax
-  \global\let\maketitle\relax
-}
+    }
+  }
+  % 本文開始時に自動で出力
+  \AtBeginDocument{\begingroup\let\@nodocument\relax\maketitle\endgroup}
+  % ページ番号は入れない（必須）
+  \pagestyle{empty}
+  \let\pagestyle\@gobble
+  \let\thispagestyle\@gobble
+  % 節見出しの設定（目安）
+  \ModifyHeading{section}{font={\jlreq@keepbaselineskip{\normalsize\sffamily\gtfamily\bfseries}}}
+  \ModifyHeading{subsection}{font={\jlreq@keepbaselineskip{\normalsize\sffamily\gtfamily\bfseries}},indent=\zw,subtitle_font={\jlreq@keepbaselineskip{\normalsize}}}
+  \ModifyHeading{subsubsection}{subtitle_font={\jlreq@keepbaselineskip{\normalsize}},indent=2\zw,before_lines=0}
+  \makeatother
+%% -----設定ここまで----- %%
 
-% 節見出しのフォントサイズ設定（目安、\ModifyHeadingで変更可能）
-\ModifyHeading{section}{font={\jlreq@keepbaselineskip{\normalsize\sffamily\gtfamily\bfseries}}}
-\ModifyHeading{subsection}{font={\jlreq@keepbaselineskip{\normalsize\sffamily\gtfamily\bfseries}},indent=\zw,subtitle_font={\jlreq@keepbaselineskip{\normalsize}}}
-\ModifyHeading{subsubsection}{subtitle_font={\jlreq@keepbaselineskip{\normalsize}},indent=2\zw,before_lines=0}
+% ここからプリアンブルです。\usepackage{ナントカ} したり \newcommand\本質{雪だるま} したりできます。
 
-\endinput
-\end{filecontents}
+% 最終ページの2段の行数をなるべく揃えたいときは
+% \usepackage[balance]{nidanfloat}
+% が有用（1ページしかないときに使うと表示が壊れるので注意）
 
-% ここからが文書ファイル本体です。
-
-\documentclass[]{cppssynopsis}
-
-\title{<卒業研究題目>}
-% \subtitle{<副題>}
-\major{<主専攻>}
-\studentID{<学籍番号>}
-\author{<著者氏名>}
-\advisor{<指導教員氏名・職名>}
+% 1ページ目の一番上に出力するものはここに記入（空行・\par はエラー）
+\titleitems{}% 卒業研究題目
+           {}% 副題（無い場合は{}のままでOK）
+           {}% 主専攻
+           {}% 学籍番号
+           {}% 著者氏名
+           {}% 指導教員氏名・職名
 
 \begin{document}
-\maketitle
 
-ここに本文を書きます。
+% ここに本文を書きます。
 
 \end{document}
