@@ -1,7 +1,7 @@
 %%
 %% This is file 'cppsthesis.cls'.
 %%
-%% Copyright (c) 2021 Shigetaka Taga
+%% Copyright (c) 2021-2022 Shigetaka Taga
 %%
 %% This software is released under the MIT License.
 %%   https://github.com/tagacchy/cppsthesis/blob/main/LICENSE
@@ -13,54 +13,41 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cppsthesis}[2021/12/11 v2.1.1 Document class for graduate thesis of Tsukuba's CPPS]
+\ProvidesClass{cppsthesis}[2022/03/07 v2.2.0 Document class for graduate thesis of Tsukuba's CPPS]
 \RequirePackage{kvoptions}
 
 % オプションの定義と処理
-\DeclareBoolOption{toc}
-\DeclareBoolOption{lof}
-\DeclareBoolOption{lot}
-\DeclareBoolOption{separatetitles}
-\DeclareBoolOption{nolabel}
-\DeclareBoolOption{centertitle}
-\DeclareBoolOption{centerall}
-\def\cppsthesis@fontsize{10pt}
-\DeclareVoidOption{10.5pt}{\def\cppsthesis@fontsize{10.5pt}}
-\DeclareStringOption[1]{abstract}
-\DeclareStringOption{jlreqoptions}
-\DeclareVoidOption{tate}{}
-\DeclareVoidOption{landscape}{}
-\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{jlreq}}
-\ProcessKeyvalOptions*
-\ifcppsthesis@centerall\cppsthesis@centertitletrue\cppsthesis@nolabeltrue\fi
-\ifx\cppsthesis@jlreqoptions\@empty\else
-  \ClassWarningNoLine{\@currname}{%
-  `jlreqoptions' option was decommissioned.\MessageBreak
-  If you want to use options of jlreq, input them directly}
-\fi
+\DeclareBoolOption{toc}% 目次
+\DeclareBoolOption{lof}% 図目次
+\DeclareBoolOption{lot}% 表目次
+\DeclareBoolOption{separatetitles}% 題目と副題を別行に
+\DeclareBoolOption{nolabel}% 中表紙の項目名無し
+\DeclareBoolOption{centertitle}% 中表紙で題目を中央に表示
+\DeclareBoolOption{centerall}% 中表紙で全項目を中央に表示
+\def\cppsthesis@fontsize{10pt}% デフォルトのフォントサイズは10pt
+\DeclareVoidOption{10.5pt}{\def\cppsthesis@fontsize{10.5pt}}% フォントサイズを10.5ptにする
+\DeclareStringOption[1]{abstract}% 要旨の出力回数
+\def\cppsthesis@only{only}% 要旨のみ出力する引数
+\DeclareVoidOption{tate}{}% tateオプションの無効化
+\DeclareVoidOption{landscape}{}% landscapeオプション無効化
+\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{jlreq}}% その他のオプションはjlreqに
+\ProcessKeyvalOptions*% オプションの処理
 
-% jlreq.clsの読み込み
+% jlreq.clsの読み込み（ここで指定したオプションは変更不可）
 \LoadClass[paper=a4,fontsize=\cppsthesis@fontsize,jafontsize=\cppsthesis@fontsize,%
   head_space=20mm,foot_space=20mm,fore-edge=25mm,gutter=25mm,report,oneside,onecolumn,openany,number_of_lines={},line_length={}]{jlreq}
 
-% 不使用コマンドクリア
-\let\@date\@empty
-\let\date\relax
-\let\and\relax
-\let\thanks\relax
-\let\abstractname\@empty
-
-% 追加の項目入力コマンド定義（\titleは*付きで再定義）
+% 追加の項目入力コマンド定義（\titleはshortに再定義、\authorは無指定でエラーになるよう修正）
 \DeclareRobustCommand*\academicyear[1]{\gdef\@academicyear{#1}}
 \DeclareRobustCommand*\title[1]{\gdef\@title{#1}}
-\newif\ifcppsthesis@subtitlegiven\cppsthesis@subtitlegivenfalse
-\DeclareRobustCommand*\subtitle[1]{\cppsthesis@subtitlegiventrue\gdef\@subtitle{#1}}
+\DeclareRobustCommand*\subtitle[1]{\gdef\@subtitle{#1}}
 \DeclareRobustCommand*\major[1]{\gdef\@major{#1}}
 \DeclareRobustCommand*\studentID[1]{\gdef\@studentID{#1}}
 \DeclareRobustCommand*\advisor[1]{\gdef\@advisor{#1}}
-\let\@author\@undefined% \author無しのときエラー 
+\let\@author\@undefined
 
-% abstract環境を再定義（微修正）
+% abstract環境を修正
+\def\abstractname{要旨}
 \renewenvironment{abstract}{%
   \ifx l\jlreq@engine\else
     \def\jlreq@parhook@abstract{\futurelet\jlreq@nextchar\jlreq@openbracket@hook}%
@@ -72,7 +59,7 @@
   \parindent=1\zw
   \bgroup\hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
   \begin{center}%
-    \Large\rmfamily\mdseries 要旨%
+    \Large\rmfamily\mdseries\abstractname
   \end{center}\egroup%
   \list{}{%
     \listparindent\parindent
@@ -115,69 +102,18 @@
   \def\@advisorlabel{指導教員：\hbox{}}
 \fi
 
-% \maketitleで題目から目次まで出力
-\renewcommand\maketitle{%
-  \hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
-  % 中表紙
-  \begin{titlepage}\LARGE
-    \begin{center}%
-      \vspace*{50pt}%
-      \@academicyear 年度\\[10pt]%
-      筑波大学理工学群社会工学類\\[10pt]%
-      卒業研究論文
-    \end{center}%
-    \vfill
-    % centertitle / centerall指定時の題目と副題
-    \ifcppsthesis@centertitle
-      \begin{center}%
-        {\Huge\@title}\ifcppsthesis@subtitlegiven\\[15pt]\@subtitle\fi
-      \end{center}%
-      \vfill
-    \fi
-    % centerall指定時の残りの項目
-    \ifcppsthesis@centerall
-      \begin{center}%
-        \@major\\[20pt]%
-        \@studentID\\[20pt]%
-        \@author\\[20pt]%
-        \@advisorlabel\@advisor
-      \end{center}%
-    % ここからリスト形式で左寄せ。LARGEだったりLargeだったりするので細かい幅調整は無し。
-    \else
-      \list{}{%
-        \labelwidth=\ifcppsthesis@nolabel\z@\else5\zw\fi
-        \labelsep\z@
-        \leftmargin\labelwidth
-        \rightmargin=\dimexpr-\marginparwidth-\marginparsep\relax
-        \itemsep=20pt
-      }%
-      % デフォルト時の題目と副題
-      \ifcppsthesis@centertitle\else
-        \item[\@titlelabel]\@title
-        \ifcppsthesis@subtitlegiven\\{\Large\@subtitle}\fi
-      \fi
-      % デフォルト時、centertitle指定時の残りの項目
-      \item[\@majorlabel]\@major
-      \item[\@studentIDlabel]\@studentID
-      \item[\@authorlabel]\@author
-      \item[\@advisorlabel]\@advisor
-      \endlist
-    \fi
-  \end{titlepage}%
-  % 中表紙裏（空白ページ）
-  \newpage\thispagestyle{empty}\mbox{}%
-  % 要旨（abstract指定回数だけ繰り返す）
-  \@tempcnta\z@
-  \loop\ifnum\@tempcnta<\cppsthesis@abstract
-    % 要旨ページ
-    \newpage\thispagestyle{empty}\vspace*{20pt}%
+% abstract=only指定なら\maketitleで要旨を出力して終了する
+\ifx\cppsthesis@abstract\cppsthesis@only
+  \renewcommand\maketitle{%
+    \hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
+    \thispagestyle{empty}\vspace*{20pt}%
     {%
       \let\\\relax
       \ifcppsthesis@separatetitles
         \leftline{\Large\@title}
-        \ifcppsthesis@subtitlegiven\leftline{\Large\quad\@subtitle}\fi
+        \ifx\@subtitle\@undefined\else\leftline{\Large\quad\@subtitle}\fi
       \else
-        \leftline{\Large\@title\ifcppsthesis@subtitlegiven\quad\@subtitle\fi}%
+        \leftline{\Large\@title\ifx\@subtitle\@undefined\else\quad---\quad\@subtitle\fi}%
       \fi
     }%
     \vspace{20pt}%
@@ -185,42 +121,114 @@
     \vspace{20pt}%
     \rightline{\Large\@advisorlabel\@advisor}%
     \vspace{40pt}%
-    \setbox\@tempboxa=\copy\jlreq@abstractbox
-    \unvbox\@tempboxa
-    % 要旨裏（空白ページ）
-    \newpage\thispagestyle{empty}\mbox{}%
-  \advance\@tempcnta1\repeat
-  \setbox\jlreq@abstractbox=\copy\voidb@x
-  % toc / lof / lot 指定時にそれぞれ出力
-  \ifnum\ifcppsthesis@toc1\fi\ifcppsthesis@lof1\fi\ifcppsthesis@lot1\else0\fi>0%
-    \newpage\setcounter{page}{1}\pagenumbering{roman}%
-    \ifcppsthesis@toc\tableofcontents\fi
-    \ifcppsthesis@lof\listoffigures\fi
-    \ifcppsthesis@lot\listoftables\fi
-  \fi
-  % 本文開始処理
-  \newpage\hsize\textwidth\setcounter{page}{1}\pagenumbering{arabic}%
-  % 使用済みコマンドのクリア
-  \global\let\@academicyear\@empty
-  \global\let\@title\@empty
-  \global\let\@subtitle\@empty
-  \global\let\@major\@empty
-  \global\let\@studentID\@empty
-  \global\let\@author\@empty
-  \global\let\@advisor\@empty
-  \global\let\cppsthesis@abstract\@empty
-  \global\let\@titlelabel\@empty
-  \global\let\@majorlabel\@empty
-  \global\let\@studentIDlabel\@empty
-  \global\let\@authorlabel\@empty
-  \global\let\@advisorlabel\@empty
-  \global\let\academicyear\relax
-  \global\let\title\relax
-  \global\let\subtitle\relax
-  \global\let\major\relax
-  \global\let\studentID\relax
-  \global\let\author\relax
-  \global\let\advisor\relax
-  \global\let\maketitle\relax
-}
+    \unvbox\jlreq@abstractbox
+    \end{document}
+  }
+% それ以外なら\maketitleで題目から目次まで出力
+\else
+  \renewcommand\maketitle{%
+    \pagenumbering{Alph}% 表示はしない（PDF用）
+    \hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
+    % 中表紙
+    \begin{titlepage}\LARGE
+      \begin{center}%
+        \vspace*{50pt}%
+        \@academicyear 年度\\[10pt]%
+        筑波大学理工学群社会工学類\\[10pt]%
+        卒業研究論文
+      \end{center}%
+      \vfill
+      % centertitle / centerall指定時の題目と副題
+      \ifcppsthesis@centertitle
+        \begin{center}%
+          {\Huge\@title}\ifx\@subtitle\@undefined\else\\[15pt]\@subtitle\fi
+        \end{center}%
+        \vfill
+      \fi
+      % centerall指定時の残りの項目
+      \ifcppsthesis@centerall
+        \begin{center}%
+          \@major\\[20pt]%
+          \@studentID\\[20pt]%
+          \@author\\[20pt]%
+          \@advisorlabel\@advisor
+        \end{center}%
+      % ここからリスト形式で左寄せ。LARGEだったりLargeだったりするので細かい幅調整は無し。
+      \else
+        \list{}{%
+          \labelwidth=\ifcppsthesis@nolabel\z@\else5\zw\fi
+          \labelsep\z@
+          \leftmargin\labelwidth
+          \rightmargin=\dimexpr-\marginparwidth-\marginparsep\relax
+          \itemsep=20pt
+        }%
+        % デフォルト時の題目と副題
+        \ifcppsthesis@centertitle\else
+          \item[\@titlelabel]\@title
+          \ifx\@subtitle\@undefined\else\\{\Large\@subtitle}\fi
+        \fi
+        % デフォルト時、centertitle指定時の残りの項目
+        \item[\@majorlabel]\@major
+        \item[\@studentIDlabel]\@studentID
+        \item[\@authorlabel]\@author
+        \item[\@advisorlabel]\@advisor
+        \endlist
+      \fi
+    \end{titlepage}%
+    % 中表紙裏（空白ページ）
+    \newpage\setcounter{page}{2}\thispagestyle{empty}\mbox{}% ページ番号は表示しない
+    % 要旨（abstract指定回数だけ繰り返す）
+    \@tempcnta\z@
+    \loop\ifnum\@tempcnta<\cppsthesis@abstract
+      % 要旨ページ
+      \newpage\thispagestyle{empty}\vspace*{20pt}%
+      {%
+        \let\\\relax
+        \ifcppsthesis@separatetitles
+          \leftline{\Large\@title}
+          \ifx\@subtitle\@undefined\else\leftline{\Large\quad\@subtitle}\fi
+        \else
+          \leftline{\Large\@title\ifx\@subtitle\@undefined\else\quad---\quad\@subtitle\fi}%
+        \fi
+      }%
+      \vspace{20pt}%
+      \centerline{\Large\@major\qquad\@studentID\qquad\@author}%
+      \vspace{20pt}%
+      \rightline{\Large\@advisorlabel\@advisor}%
+      \vspace{40pt}%
+      \setbox\@tempboxa=\copy\jlreq@abstractbox
+      \unvbox\@tempboxa
+      % 要旨裏（空白ページ）
+      \newpage\thispagestyle{empty}\mbox{}%
+    \advance\@tempcnta1\repeat
+    \setbox\jlreq@abstractbox=\copy\voidb@x
+    % toc / lof / lot 指定時にそれぞれ出力
+    \ifnum\ifcppsthesis@toc1\fi\ifcppsthesis@lof1\fi\ifcppsthesis@lot1\else0\fi>0%
+      \newpage\pagenumbering{roman}%
+      \ifcppsthesis@toc\tableofcontents\fi
+      \ifcppsthesis@lof\listoffigures\fi
+      \ifcppsthesis@lot\listoftables\fi
+    \fi
+    % 本文開始処理
+    \newpage\hsize\textwidth\pagenumbering{arabic}%
+    % 使用済みコマンドのクリア
+    \jlreq@endofmaketitle
+    \global\let\academicyear\relax
+    \global\let\subtitle\relax
+    \global\let\major\relax
+    \global\let\studentID\relax
+    \global\let\advisor\relax
+    \global\let\@academicyear\@empty
+    \global\let\@subtitle\@empty
+    \global\let\@major\@empty
+    \global\let\@studentID\@empty
+    \global\let\@advisor\@empty
+    \global\let\cppsthesis@abstract\@empty
+    \global\let\@titlelabel\@empty
+    \global\let\@majorlabel\@empty
+    \global\let\@studentIDlabel\@empty
+    \global\let\@authorlabel\@empty
+    \global\let\@advisorlabel\@empty
+  }
+\fi
 \endinput
