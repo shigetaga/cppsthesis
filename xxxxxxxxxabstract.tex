@@ -1,4 +1,4 @@
-%% -----設定ここから----- %%
+%% -----基本設定ここから----- %%
 %% 主に必須項目の設定をしているので触らないこと（変更可能項目は後で変更できます）
 \makeatletter
   % 一部のオプションを強制するjlreq読み込みコマンド
@@ -34,7 +34,7 @@
   \let\pagestyle\@gobble
   \let\thispagestyle\@gobble
 \makeatother
-%% -----設定ここまで----- %%
+%% -----基本設定ここまで----- %%
 
 % jlreqクラスの読み込み（ \loadjlreqclass[<オプション>] でjlreqのクラスオプションを指定可能。余白とフォントサイズの変更はここから）
 \loadjlreqclass
@@ -49,7 +49,7 @@
 % 図表見出しの設定（目安）
 \jlreqsetup{caption_font={\normalsize\sffamily\gtfamily\bfseries},caption_label_font={\normalsize\sffamily\gtfamily\bfseries}}
 
-% ここからプリアンブルです。\usepackage{ナントカ} したり \newcommand\本質{雪だるま} したりできます。
+% プリアンブルここから
 
 % 最終ページの2段の行数をなるべく揃えたいときは
 % \usepackage[balance]{nidanfloat}
@@ -65,6 +65,6 @@
 
 \begin{document}
 
-% ここに本文を書きます。
+% 本文
 
 \end{document}
