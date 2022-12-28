@@ -1,0 +1,86 @@
+%% -----設定ここから----- %%
+\makeatletter
+  % 上下余白20mm、左右余白16mm、フォントサイズ9pt、用紙サイズはA4、2段組み（段間6mm）
+  \documentclass[head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,fontsize=9pt,paper=a4,twocolumn,column_gap=6mm,baselineskip=1.62zh]{jlreq}
+  % フォント設定（Times New Roman以外は変更可）
+  \ifx l\jlreq@engine
+    \usepackage[no-math]{luatexja-fontspec}
+    \usepackage{mathptmx}% 数式フォントをTimes Italicに（ただしbmと相性が悪い）
+    \setmainfont{Times New Roman}% 本文の英数字はTimes New Roman
+    \setsansfont{Source Sans Pro}% サンセリフ体（見出し用）
+    \setmonofont{Source Code Pro}% タイプライタ体
+    \setmainjfont{HaranoAjiMincho-Regular}[BoldFont=HaranoAjiMincho-Bold]% 本文は明朝体（\bfseries,\textbf{}は明朝体のまま太くなる）
+    \setsansjfont{HaranoAjiGothic-Regular}[BoldFont=HaranoAjiGothic-Bold]% ゴシック体（\bfseries,\textbf{}でゴシック体のまま太くなる）
+    \setmonojfont{HaranoAjiGothic-Regular}[BoldFont=HaranoAjiGothic-Bold]% タイプライタ体はゴシック体を流用
+    % \usepackage{mathastext}% Times New Romanをそのまま数式フォントにするなら（bmも可能）
+  \else
+    \usepackage[T1]{fontenc}
+    \usepackage{mathptmx}% 本文Times・数式Times Italic（レガシーLaTeXにはpre-definedなTimes New Romanは無いので最も近いTimesで代用）
+    \usepackage[deluxe\ifx u\jlreq@engine,uplatex\fi]{otf}% 多ウェイト化
+    \usepackage[noalphabet]{pxchfon}% 和文フォント指定
+    \setminchofont{HaranoAjiMincho-Regular.otf}% 明朝体
+    \setboldminchofont{HaranoAjiMincho-Bold.otf}% 明朝体（太字）
+    \setgothicfont{HaranoAjiGothic-Regular.otf}% ゴシック体
+    \setboldgothicfont{HaranoAjiGothic-Bold.otf}% ゴシック体（太字）
+    % \usepackage{mathastext}% Times New Romanをそのまま数式フォントにするなら（bmも可能）
+  \fi
+  % ページ番号は入れない
+  \pagestyle{empty} \let\pagestyle\@gobble \let\thispagestyle\@gobble
+  % タイトル項目を入力するコマンド
+  \DeclareRobustCommand*\titleitems[6]{
+    % \maketitle の中身を設定
+    \gdef\@maketitle{\begingroup
+      \fontsize{9pt}{12pt}\selectfont\sffamily
+      \begin{center}%
+        \ifx l\jlreq@engine\ltjsetparameter{kanjiskip={0.05\zw minus 0.05\zw}}\else\kanjiskip=0.05zw minus 0.05zw\fi% 字間は少し広め
+        \vspace{10pt}%
+        \vtop{\fontsize{18pt}{24pt}\selectfont{#1}}% #1: 題目
+        \vspace{12pt}%
+        \ifx#2\@empty\else\vtop{{#2}}% #2: 副題
+        \vspace{6pt}\fi
+        \vtop{{#3}\　{#4}\　{#5}}% #3: 主専攻、#4: 学籍番号、#5: 著者氏名
+        \vspace{6pt}
+        \vtop{指導教員：{#6}}% #6: 指導教員氏名・職名
+        \vspace{14pt}\vtop{}%
+      \end{center}%
+    \endgroup}
+    % 本文開始時に自動でタイトル出力
+    \AtBeginDocument{\begingroup\let\@nodocument\relax\maketitle\endgroup}
+  }
+  % 節見出しの設定
+  \ModifyHeading{section}{font={\jlreq@keepbaselineskip{\normalsize\sffamily}},subtitle_font={\jlreq@keepbaselineskip{\normalsize\sffamily}},lines=1,before_lines=1}
+  \ModifyHeading{subsection}{font={\jlreq@keepbaselineskip{\normalsize\sffamily}},subtitle_font={\jlreq@keepbaselineskip{\normalsize\sffamily}},lines=1,before_lines=1}
+  \ModifyHeading{subsubsection}{font={\jlreq@keepbaselineskip{\normalsize\sffamily}},subtitle_font={\jlreq@keepbaselineskip{\normalsize\sffamily}},lines=1,before_lines=1}
+  % 連続見出しでは間に空行を入れない
+  \SetBlockHeadingSpaces{ {_section{lines=1,before_lines=1},_subsection{lines=1,before_lines=0},_subsubsection{lines=1,before_lines=0}}
+                          {_section{lines=1,before_lines=1},_subsection{lines=1,before_lines=0}}
+                          {_subsection{lines=1,before_lines=1},_subsubsection{lines=1,before_lines=0}}
+  }
+  % 番号の後にピリオド
+  \renewcommand{\thesection}{\arabic{section}.}
+  \renewcommand{\thesubsection}{\thesection~\arabic{subsection}.}
+  \renewcommand{\thesubsubsection}{\thesubsection~\arabic{subsubsection}.}
+  % 図表見出しの設定
+  \jlreqsetup{caption_font={\normalsize\sffamily},caption_label_font={\normalsize\sffamily}}
+\makeatother
+%% -----設定ここまで----- %%
+
+% プリアンブルここから
+
+% 最終ページの2段の行数をなるべく揃えたいときは
+% \usepackage[balance]{nidanfloat}
+% が有用（1ページしかないときに使うと表示が壊れるので注意）
+
+% タイトル項目はここに記入（空行・\par はエラー）
+\titleitems{}% 卒業研究題目
+           {}% 副題（無い場合は{}のままでOK）
+           {}% 主専攻
+           {}% 学籍番号
+           {}% 著者氏名
+           {}% 指導教員氏名・職名
+
+\begin{document}
+
+% 本文
+
+\end{document}
