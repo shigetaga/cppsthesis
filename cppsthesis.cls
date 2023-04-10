@@ -1,4 +1,4 @@
-%%
+﻿%%
 %% This is file 'cppsthesis.cls'.
 %%
 %% Copyright (c) 2021-2022 Shigetaka Taga
