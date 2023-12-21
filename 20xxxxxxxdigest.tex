@@ -2,28 +2,26 @@
 \makeatletter
   % 上下余白20mm、左右余白16mm、フォントサイズ9pt、用紙サイズはA4、2段組み（段間6mm）
   \documentclass[head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,fontsize=9pt,paper=a4,twocolumn,column_gap=6mm,baselineskip=1.62zh]{jlreq}
-  % フォント設定（Times New Roman以外は変更可）
+  % フォント設定（一例。変更可）
   \ifx l\jlreq@engine
     \usepackage[no-math]{luatexja-fontspec}
-    \usepackage{mathptmx}% 数式フォントをTimes Italicに（ただしbmと相性が悪い）
     \setmainfont{Times New Roman}% 本文の英数字はTimes New Roman
-    \setsansfont{Source Sans Pro}% サンセリフ体（見出し用）
+    \setsansfont{QTHelvetCnd}[Scale=1.15]% サンセリフ体（見出し用）
     \setmonofont{Source Code Pro}% タイプライタ体
     \setmainjfont{HaranoAjiMincho-Regular}[BoldFont=HaranoAjiMincho-Bold]% 本文は明朝体（\bfseries,\textbf{}は明朝体のまま太くなる）
     \setsansjfont{HaranoAjiGothic-Regular}[BoldFont=HaranoAjiGothic-Bold]% ゴシック体（\bfseries,\textbf{}でゴシック体のまま太くなる）
     \setmonojfont{HaranoAjiGothic-Regular}[BoldFont=HaranoAjiGothic-Bold]% タイプライタ体はゴシック体を流用
-    % \usepackage{mathastext}% Times New Romanをそのまま数式フォントにするなら（bmも可能）
   \else
     \usepackage[T1]{fontenc}
-    \usepackage{mathptmx}% 本文Times・数式Times Italic（レガシーLaTeXにはpre-definedなTimes New Romanは無いので最も近いTimesで代用）
+    \usepackage{mathptmx}% 本文Times・数式Times Italic
     \usepackage[deluxe\ifx u\jlreq@engine,uplatex\fi]{otf}% 多ウェイト化
     \usepackage[noalphabet]{pxchfon}% 和文フォント指定
     \setminchofont{HaranoAjiMincho-Regular.otf}% 明朝体
     \setboldminchofont{HaranoAjiMincho-Bold.otf}% 明朝体（太字）
     \setgothicfont{HaranoAjiGothic-Regular.otf}% ゴシック体
     \setboldgothicfont{HaranoAjiGothic-Bold.otf}% ゴシック体（太字）
-    % \usepackage{mathastext}% Times New Romanをそのまま数式フォントにするなら（bmも可能）
   \fi
+  \AtEndPreamble{\usepackage[italic]{mathastext}}% Times New Romanをそのまま数式フォントにする
   % ページ番号は入れない
   \pagestyle{empty} \let\pagestyle\@gobble \let\thispagestyle\@gobble
   % タイトル項目を入力するコマンド
@@ -62,6 +60,8 @@
   \renewcommand{\thesubsubsection}{\thesubsection~\arabic{subsubsection}.}
   % 図表見出しの設定
   \jlreqsetup{caption_font={\normalsize\sffamily},caption_label_font={\normalsize\sffamily}}
+  % 箇条書きの余白の設定
+  \jlreqsetup{itemization_beforeafter_space=0pt,itemization_itemsep=0pt}
 \makeatother
 %% -----設定ここまで----- %%
 

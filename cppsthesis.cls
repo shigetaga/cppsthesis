@@ -1,7 +1,7 @@
 ﻿%%
 %% This is file 'cppsthesis.cls'.
 %%
-%% Copyright (c) 2021-2022 Shigetaka Taga
+%% Copyright (c) 2021-2023 Shigetaka Taga
 %%
 %% This software is released under the MIT License.
 %%   https://github.com/tagacchy/cppsthesis/blob/main/LICENSE
@@ -13,7 +13,7 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{cppsthesis}[2022/03/07 v2.2.0 Document class for graduate thesis of Tsukuba's CPPS]
+\ProvidesClass{cppsthesis}[2023/12/22 v2.3.0 Document class for graduate thesis of Tsukuba's CPPS]
 \RequirePackage{kvoptions}
 
 % オプションの定義と処理
@@ -127,7 +127,7 @@
 % それ以外なら\maketitleで題目から目次まで出力
 \else
   \renewcommand\maketitle{%
-    \pagenumbering{Alph}% 表示はしない（PDF用）
+    \def\thepage{Title}% page label
     \hsize=\dimexpr\textwidth+\marginparwidth+\marginparsep\relax
     % 中表紙
     \begin{titlepage}\LARGE
@@ -176,12 +176,12 @@
       \fi
     \end{titlepage}%
     % 中表紙裏（空白ページ）
-    \newpage\setcounter{page}{2}\thispagestyle{empty}\mbox{}% ページ番号は表示しない
+    \newpage\def\thepage{(blank)}\thispagestyle{empty}\mbox{}%
     % 要旨（abstract指定回数だけ繰り返す）
     \@tempcnta\z@
     \loop\ifnum\@tempcnta<\cppsthesis@abstract
       % 要旨ページ
-      \newpage\thispagestyle{empty}\vspace*{20pt}%
+      \newpage\def\thepage{Abstract}\thispagestyle{empty}\vspace*{20pt}%
       {%
         \let\\\relax
         \ifcppsthesis@separatetitles
@@ -199,7 +199,7 @@
       \setbox\@tempboxa=\copy\jlreq@abstractbox
       \unvbox\@tempboxa
       % 要旨裏（空白ページ）
-      \newpage\thispagestyle{empty}\mbox{}%
+      \newpage\def\thepage{(blank)}\thispagestyle{empty}\mbox{}%
     \advance\@tempcnta1\repeat
     \setbox\jlreq@abstractbox=\copy\voidb@x
     % toc / lof / lot 指定時にそれぞれ出力
