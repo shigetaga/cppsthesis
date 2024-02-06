@@ -1,7 +1,9 @@
 ﻿%% -----設定ここから----- %%
 \makeatletter
+  \RequirePackage{jlreq-helpers}
+  \jlreq@helper@guessengine
   % 上下余白20mm、左右余白16mm、フォントサイズ9pt、用紙サイズはA4、2段組み（段間6mm）
-  \documentclass[head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,fontsize=9pt,paper=a4,twocolumn,column_gap=6mm,baselineskip=1.62zh]{jlreq}
+  \documentclass[\ifx l\jlreq@result\else dvipdfmx,\fi head_space=20mm,foot_space=20mm,fore-edge=16mm,gutter=16mm,fontsize=9pt,paper=a4,twocolumn,column_gap=6mm,baselineskip=1.62zh]{jlreq}
   % フォント設定（一例。変更可）
   \ifx l\jlreq@engine
     \usepackage[no-math]{luatexja-fontspec}
